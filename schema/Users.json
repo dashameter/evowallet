@@ -1,0 +1,54 @@
+{
+  "Users": {
+   "indices": [
+    {
+     "properties": [
+      {
+       "pubkey": "asc"
+      }
+     ],
+     "unique": true
+    },
+    {
+     "properties": [
+      {
+       "identityId": "asc"
+      }
+     ],
+     "unique": true
+    },
+    {
+     "properties": [
+      {
+       "dpnsDocId": "asc"
+      }
+     ],
+     "unique": true
+    }
+   ],
+   "required": [
+    "pubkey",
+    "identityId",
+    "dpnsDocId",
+    "name"
+   ],
+   "properties": {
+    "name": {
+     "type": "string"
+    },
+    "pubkey": {
+        "maxLength": 100,
+     "type": "string"
+    },
+    "dpnsDocId": {
+        "maxLength": 100,
+     "type": "string"
+    },
+    "identityId": {
+        "maxLength": 100,
+     "type": "string"
+    }
+   },
+   "additionalProperties": false
+  }
+ }

@@ -1,0 +1,49 @@
+{
+  "name": "evowallet",
+  "version": "1.0.0",
+  "description": "A Dash Evolution Wallet your grandma could use.",
+  "author": "dashameter",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt --port 3333",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "eslint --fix --ext .js,.vue --ignore-path .gitignore ."
+  },
+  "lint-staged": {
+    "*.{js,vue}": "npm run lint"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "dependencies": {
+    "@chenfengyuan/vue-qrcode": "^1.0.2",
+    "@nuxtjs/axios": "^5.11.0",
+    "@nuxtjs/pwa": "^3.0.0-beta.20",
+    "crypto-js": "^4.0.0",
+    "dash": "^3.14.1",
+    "dashmachine-crypto": "^0.5.0",
+    "nuxt": "^2.12.2",
+    "vue-qrcode-reader": "^2.3.1",
+    "vue-timeago": "^5.1.2",
+    "vuex-persistedstate": "^3.0.1"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config": "^3.0.0",
+    "@nuxtjs/eslint-module": "^2.0.0",
+    "@nuxtjs/vuetify": "^1.11.2",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-nuxt": ">=1.0.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-vue": "^6.2.2",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.9",
+    "prettier": "^2.0.5"
+  }
+}
