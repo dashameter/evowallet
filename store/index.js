@@ -961,12 +961,13 @@ export const actions = {
         //   contractId: '7PBvxeGpj7SsWfvDSa31uqEMt58LAiJww7zNcVRP1uEM',
         // },
 
-        users: { contractId: 'FKS7RQeK7zQuUAQZ1v5DWtU6q6DiyWNfBBjerigro3JH' },
+        users: { contractId: 'J9sQ7VSNqwm5JsCxCzFnxGF3vfZRkx6cHj4uGFLH27Ld' },
         primitives: {
-          contractId: '45fpsuyYzpFGrgfTKMHn392ahrg9cKB6d7nSCaHfgRQw',
+          contractId: '4g96TUCkfPVJjGHKAXXQb1SgSQ7qcNrGVcjUsVEaEcWU',
         },
+        jembe: { contractId: 'F2Bv1ioMoxFsTu8JfN7gD9EQdUWNwXnfk6vzw9Te66Uv' },
         PaymentRequest: {
-          contractId: '61Qk7Ev2eU9T5e2WauLvY2hMZMWe5aXYsGADoKmRhLJ3',
+          contractId: '2SMN9n5JA7UiZcnwccVVTpQWX1TSEbFja6jamJ1mC9g9',
         },
       },
     })
@@ -1202,6 +1203,7 @@ export const actions = {
     try {
       const createDocument = await client.platform.names.register(
         this.state.name.label + '.dash',
+        { dashUniqueIdentityId: identity.getId() },
         identity
       )
       console.log({ createDocument })

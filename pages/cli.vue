@@ -19,18 +19,12 @@
           <v-list-item-subtitle>by Publisher</v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action color="#008de4">
-          <v-btn dark color="#008de4">
-            open
-          </v-btn>
+          <v-btn dark color="#008de4"> open </v-btn>
         </v-list-item-action>
       </v-list-item>
-      <v-card-text>
-        These are the dApps that power the tubes.
-      </v-card-text>
+      <v-card-text> These are the dApps that power the tubes. </v-card-text>
       <v-card-actions>
-        <v-btn text class="signup-actions">
-          5 Reviews
-        </v-btn>
+        <v-btn text class="signup-actions"> 5 Reviews </v-btn>
         <v-spacer></v-spacer>
         <v-btn icon>
           <v-icon class="signup-actions">mdi-heart</v-icon>

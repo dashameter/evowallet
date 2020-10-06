@@ -88,7 +88,7 @@
         />
       </a>
       <v-toolbar-title
-        style="font-family: 'Montserrat', sans-serif; font-size: 1.5rem;"
+        style="font-family: 'Montserrat', sans-serif; font-size: 1.5rem"
         v-text="title"
       />
       <v-spacer />
@@ -98,9 +98,7 @@
       <v-overlay :value="this.$store.state.isClientError">
         <v-alert prominent type="error">
           <v-row align="center">
-            <v-col class="headline">
-              There was an error:
-            </v-col>
+            <v-col class="headline"> There was an error: </v-col>
           </v-row>
           <v-row align="center">
             <v-col class="headline">
@@ -114,9 +112,7 @@
           </v-row>
           <v-row align="center" justify="center">
             <v-col justify="center">
-              <v-btn href="/">
-                Reload
-              </v-btn>
+              <v-btn href="/"> Reload </v-btn>
             </v-col>
           </v-row>
         </v-alert>
@@ -144,13 +140,11 @@
 
       <v-snackbar v-model="snackbar.show" :top="'top'" :color="snackbar.color">
         {{ snackbar.text }}
-        <v-btn dark text @click="snackbar.show = false">
-          Close
-        </v-btn>
+        <v-btn dark text @click="snackbar.show = false"> Close </v-btn>
       </v-snackbar>
     </v-content>
     <v-footer padless app color="white">
-      <span style="width: 100%;" class="text-center">
+      <span style="width: 100%" class="text-center">
         {{ new Date().getFullYear() }} —
         <strong><a href="https://dash.org" target="_blank">Dash.org</a></strong>
       </span>

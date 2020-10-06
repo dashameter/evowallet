@@ -10,7 +10,7 @@
 
     <Mobile class="hidden-sm-and-up" /> <Desktop class="hidden-xs-only mt-n4" />
     <v-overlay :value="!!mnemonic">
-      <v-stepper v-model="stepperOnboard" light style="max-width: 545px;">
+      <v-stepper v-model="stepperOnboard" light style="max-width: 545px">
         <v-stepper-header>
           <v-stepper-step :complete="stepperOnboard > 1" step="1"
             >Save passphrase</v-stepper-step
@@ -65,9 +65,7 @@
             <v-divider vertical="" />
             <v-row>
               <v-spacer></v-spacer>
-              <v-btn text @click="stepperOnboard = 1">
-                Back
-              </v-btn>
+              <v-btn text @click="stepperOnboard = 1"> Back </v-btn>
               <v-btn class="mr-4" color="primary" @click="finish">
                 Finish
               </v-btn>

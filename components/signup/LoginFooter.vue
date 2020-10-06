@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p style="font-family: 'Open Sans', sans-serif; font-size: 12pt;">
+    <p style="font-family: 'Open Sans', sans-serif; font-size: 12pt">
       You can also
       <a class="font-weight-bold" @click="mnemonicDialog = true"> login</a>
       into your existing Dash Account.

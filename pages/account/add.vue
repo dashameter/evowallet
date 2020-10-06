@@ -1,7 +1,5 @@
 <template>
-  <div>
-    time to add an account
-  </div>
+  <div>time to add an account</div>
 </template>
 <script>
 export default {

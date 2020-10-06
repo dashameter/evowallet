@@ -2,7 +2,7 @@
   <div>
     <v-card
       max-width="600px"
-      style="background: #787878; color: white;"
+      style="background: #787878; color: white"
       class="mx-auto text-center headline"
     >
       Scan / Drag&Drop QR Code

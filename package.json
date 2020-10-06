@@ -24,7 +24,7 @@
     "@nuxtjs/axios": "^5.11.0",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "crypto-js": "^4.0.0",
-    "dash": "^3.14.1",
+    "dash": "^3.15.0",
     "dashmachine-crypto": "^0.5.0",
     "nuxt": "^2.12.2",
     "vue-qrcode-reader": "^2.3.1",
