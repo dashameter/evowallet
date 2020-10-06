@@ -5,9 +5,7 @@
     <v-card class="mx-auto my-5" max-width="344" outlined>
       <v-list-item>
         <v-list-item-content>
-          <div class="overline mb-4">
-            Welcome
-          </div>
+          <div class="overline mb-4">Welcome</div>
           <v-list-item-title class="headline mb-1 text-center">
             {{ this.$store.state.name.label }}
           </v-list-item-title>
@@ -28,11 +26,9 @@
               <v-icon>mdi-clipboard</v-icon>Copied!
             </v-btn>
           </v-overlay>
-          <div class="overline mb-4">
-            PIN for dapp actions
-          </div>
+          <div class="overline mb-4">PIN for dapp actions</div>
           <v-list-item-title class="headline mb-1 text-center">
-            <span ref="loginpin" style="letter-spacing: 0.1em;">{{
+            <span ref="loginpin" style="letter-spacing: 0.1em">{{
               this.$store.state.loginPin
             }}</span>
           </v-list-item-title>
@@ -64,9 +60,7 @@
 
       <v-card-actions v-if="curActionRequest.actionRequired">
         <v-btn outlined color="error" large @click="rejectDoc()">
-          <v-icon left>
-            mdi-cancel
-          </v-icon>
+          <v-icon left> mdi-cancel </v-icon>
 
           Cancel
         </v-btn>
@@ -415,7 +409,7 @@ export default {
       const queryOpts = {
         limit: '1',
         startAt: '1',
-        orderBy: [['unixTimestamp', 'desc']],
+        orderBy: [['$createdAt', 'desc']],
         where: [['accountDocId', '==', curADId]], // TODO where unixTimestamp less than 1 min old
       }
 
@@ -510,7 +504,7 @@ export default {
       const queryOpts = {
         limit: '1',
         startAt: '1',
-        orderBy: [['unixTimestamp', 'desc']],
+        orderBy: [['$createdAt', 'desc']],
         where: [
           ['accountDocId', '==', this.curAccountDocId],
           // ['unixTimestamp', '<', 110], //recentTimestamp],
@@ -591,65 +585,6 @@ export default {
       await sleep(5000)
       this.pollDocumentActionRequest()
     },
-    async pollContract() {
-      // TODO replace with state.loggedIn
-      if (!this.$store.state.name.isRegistered) return
-
-      const { curActionRequest } = this
-
-      console.log('polling', Date(Date.now()).toString())
-
-      const queryOpts = {
-        limit: '1',
-        startAt: 0,
-        orderBy: [['temp_timestamp', 'desc']],
-        where: [['reference', '==', this.$store.state.name.docId]], // TODO query > temp_timestamp
-      }
-
-      const appRequest = await this.queryDocuments({
-        appName: 'wdsContract',
-        typeLocator: 'TweetRequest',
-        queryOpts,
-      })
-
-      let [appDoc] = appRequest
-      console.log({ appDoc })
-
-      const appDocExists = !!appDoc
-      console.log({ appDocExists })
-
-      if (appDocExists) {
-        const verifiedApp = await this.verifyAppRequest(appDoc) // Doc passes our pin test
-        const isPinVerified = verifiedApp.success
-        console.log({ isPinVerified })
-
-        const isDocNew = !!(appDoc.id != this.$store.state.wdsLastDoc) // It's a fresh, unseen doc
-        console.log({ isDocNew })
-
-        // We have a new, legitimate request, set notification details for approval
-        if (isPinVerified && isDocNew) {
-          // TODO sometimes the sound plays but the v-card doesn't update, consider a watcher / state based solution instead
-          // Yes should definitely be in state so it can be reset upon account switch
-          console.log('THIS SHOULD SHOW IN THE VIEWPORT')
-          const signDoc = {}
-          signDoc.doc = appDoc
-          signDoc.overline = appDoc.data.temp_dappname
-          signDoc.headline = appDoc.type
-          signDoc.payload = appDoc.data.tweet
-          signDoc.actionRequired = true
-          this.$store.commit('setCurActionRequest', signDoc)
-          console.log('THIS SHOULD SHOW IN THE VIEWPORT', this.signDoc)
-          this.playNotification()
-
-          // We don't want to hear the sound every 5 seconds
-          this.$store.commit('setLastDoc', curActionRequest.doc.id) // TODO change from id to doc to query > timestamp
-        }
-      }
-      // this.queryDocuments({ typeLocator: 'LoginResponse' })
-      await sleep(5000)
-      this.pollContract()
-    },
   },
 }
-// pin 751421
 </script>

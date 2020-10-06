@@ -97,8 +97,8 @@ export default Vue.extend({
         this.pollFetchPaymentRequests()
       }
     },
-    date(timestamp) {
-      return new Date(timestamp * 1000)
+    date($createdAt) {
+      return new Date($createdAt)
     },
     amountPaid(idx) {
       // const pr: any = {this.paymentRequests[idx].docs[0]

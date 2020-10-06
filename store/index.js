@@ -564,7 +564,7 @@ export const actions = {
     const queryOpts = {
       startAt: 1,
       limit: 5, // TODO fix select DISTINCT problem and paginate dApps
-      orderBy: [['unixTimestamp', 'desc']],
+      orderBy: [['$createdAt', 'desc']],
       where: [['accountDocId', '==', getters['curAccountDocId']]],
     }
     const dappName = 'primitives'
@@ -779,7 +779,7 @@ export const actions = {
       // TODO DelegatedCredentials should be its own request type, not DocumentActionRequest
 
       Object.assign(fragment, payload[primitiveType])
-      fragment.unixTimestamp = timestamp
+      fragment.$createdAt = timestamp
       fragment.accountDocId = getters['curAccountDocId'] // TODO V2 should be userId
       fragment.contractId = actionRequest.doc.$dataContractId
       // dappName TODO currently insecure duplication by dApp Browser
@@ -818,7 +818,7 @@ export const actions = {
         }),
         pubKey: publicKey,
         delegateIdentityId, // Using the idenity of the doc that was verified against pin
-        unixTimestampExpiration: timestamp + 1200, // TODO change 20min (1200s) timeout to variable
+        expiresAt: timestampMS + 1200000, // TODO change 20min (1200s) timeout to variable
         //  timestamp = Math.floor(Date.now() / 1000) // For next contract iteration
       }
 
@@ -963,9 +963,8 @@ export const actions = {
 
         users: { contractId: 'FKS7RQeK7zQuUAQZ1v5DWtU6q6DiyWNfBBjerigro3JH' },
         primitives: {
-          contractId: 'A3XJ4LuqJ9cnfXJ4mkRBsbwUFuUCRcpsSrKvhxouX9Xf',
+          contractId: '45fpsuyYzpFGrgfTKMHn392ahrg9cKB6d7nSCaHfgRQw',
         },
-        jembe: { contractId: '5bLpxkjHNALUiT2uA6AzM3BNYRZf8kx1bzSrGe2N2eXK' },
         PaymentRequest: {
           contractId: '61Qk7Ev2eU9T5e2WauLvY2hMZMWe5aXYsGADoKmRhLJ3',
         },
