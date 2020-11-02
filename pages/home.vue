@@ -668,5 +668,4 @@ export default {
     },
   },
 }
-// pin 751421
 </script>

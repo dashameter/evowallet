@@ -287,7 +287,7 @@ export const actions = {
       limit: 100,
       startAt: 1,
       orderBy: [['timestamp', 'desc']],
-      where: [['requesteeUserId', '==', state.name.docId]],
+      where: [['requesteeUserId', '==', state.name.docId.toString()]],
     }
 
     const paymentRequests = await dispatch('queryDocuments', {
@@ -542,7 +542,7 @@ export const actions = {
       limit: 10,
       startAt: 1,
       orderBy: [['timestamp', 'desc']],
-      where: [['requesteeUserId', '==', state.name.docId]],
+      where: [['requesteeUserId', '==', state.name.docId.toString()]],
     }
     const transactions = await dispatch('queryDocuments', {
       dappName: 'PaymentRequest',
@@ -644,7 +644,7 @@ export const actions = {
     const balance = client.account.getTotalBalance()
     console.log('Total Balance: ' + balance)
     if (balance > 500000) {
-      if (this.$store.state.identityId === null) {
+      if (state.identityId === null) {
         try {
           this.registerIdentity()
         } catch (e) {
@@ -656,7 +656,7 @@ export const actions = {
         }
       } else {
         console.log('Found existing identityId')
-        console.log(this.$store.state.identityId)
+        console.log(state.identityId)
       }
     } else {
       try {
@@ -961,13 +961,13 @@ export const actions = {
         //   contractId: '7PBvxeGpj7SsWfvDSa31uqEMt58LAiJww7zNcVRP1uEM',
         // },
 
-        users: { contractId: 'J9sQ7VSNqwm5JsCxCzFnxGF3vfZRkx6cHj4uGFLH27Ld' },
+        users: { contractId: '9xUQuDE95yx5o2oVGWqvG94ETmqdxf6LC5d6Lagiux4K' },
         primitives: {
-          contractId: '4g96TUCkfPVJjGHKAXXQb1SgSQ7qcNrGVcjUsVEaEcWU',
+          contractId: 'J2jZkuK53qXQybna2UUYTHGA48XKRWFucyhi6cLk3foc',
         },
-        jembe: { contractId: 'F2Bv1ioMoxFsTu8JfN7gD9EQdUWNwXnfk6vzw9Te66Uv' },
+        jembe: { contractId: 'FbsTSaHhPP5DdFtiaXdqE9p9fut9wh3N5a2yVsiEYFpT' },
         PaymentRequest: {
-          contractId: '2SMN9n5JA7UiZcnwccVVTpQWX1TSEbFja6jamJ1mC9g9',
+          contractId: '2Hw6XoB289LJ8d6QEvgq9whvvB7qY5vZKKHXSwGvhre9',
         },
       },
     })
