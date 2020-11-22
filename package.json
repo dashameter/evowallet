@@ -5,7 +5,8 @@
   "author": "dashameter",
   "private": true,
   "scripts": {
-    "dev": "nuxt --port 3333",
+    "dev": "nuxt --port 3331",
+    "local": "node ./scripts/registerContracts.js && ./scripts/source-datacontracts.sh",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
@@ -24,7 +25,7 @@
     "@nuxtjs/axios": "^5.11.0",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "crypto-js": "^4.0.0",
-    "dash": "^3.16.1",
+    "dash": "^3.16.2",
     "dashmachine-crypto": "^0.5.0",
     "nuxt": "^2.12.2",
     "vue-qrcode-reader": "^2.3.1",

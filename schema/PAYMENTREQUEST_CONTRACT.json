@@ -1,0 +1,222 @@
+{
+    "AddressIndex": {
+        "indices": [
+            {
+                "unique": false,
+                "properties": [
+                    {
+                        "$ownerId": "asc"
+                    }
+                ]
+            },
+            {
+                "unique": true,
+                "properties": [
+                    {
+                        "index": "asc"
+                    }
+                ]
+            },
+            {
+                "unique": true,
+                "properties": [
+                    {
+                        "address": "asc"
+                    }
+                ]
+            }
+        ],
+        "required": [
+            "address",
+            "index"
+        ],
+        "properties": {
+            "index": {
+                "type": "number"
+            },
+            "address": {
+                "type": "string",
+                "maxLength": 62,
+                "minLength": 0
+            }
+        },
+        "additionalProperties": false
+    },
+    "PaymentIntent": {
+        "indices": [
+            {
+                "unique": false,
+                "properties": [
+                    {
+                        "requesterUserId": "asc"
+                    }
+                ]
+            },
+            {
+                "unique": false,
+                "properties": [
+                    {
+                        "requesteeUserId": "asc"
+                    }
+                ]
+            },
+            {
+                "unique": false,
+                "properties": [
+                    {
+                        "timestamp": "desc"
+                    }
+                ]
+            }
+        ],
+        "required": [
+            "requesterUserId",
+            "requesterUserName",
+            "requesteeUserId",
+            "requesteeUserName",
+            "encRefundAddress",
+            "timestamp"
+        ],
+        "properties": {
+            "timestamp": {
+                "type": "integer"
+            },
+            "requesteeUserId": {
+                "type": "string",
+                "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
+                "maxLength": 44,
+                "minLength": 42
+            },
+            "requesterUserId": {
+                "type": "string",
+                "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
+                "maxLength": 44,
+                "minLength": 42
+            },
+            "encRefundAddress": {
+                "type": "string"
+            },
+            "requesteeUserName": {
+                "type": "string",
+                "pattern": "^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])$",
+                "maxLength": 62
+            },
+            "requesterUserName": {
+                "type": "string",
+                "pattern": "^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])$",
+                "maxLength": 62
+            }
+        },
+        "additionalProperties": false
+    },
+    "PaymentRequest": {
+        "indices": [
+            {
+                "unique": false,
+                "properties": [
+                    {
+                        "requesterUserId": "asc"
+                    },
+                    {
+                        "refId": "asc"
+                    }
+                ]
+            },
+            {
+                "unique": false,
+                "properties": [
+                    {
+                        "requesteeUserId": "asc"
+                    },
+                    {
+                        "refId": "asc"
+                    }
+                ]
+            },
+            {
+                "unique": false,
+                "properties": [
+                    {
+                        "refId": "asc"
+                    }
+                ]
+            },
+            {
+                "unique": false,
+                "properties": [
+                    {
+                        "timestamp": "desc"
+                    },
+                    {
+                        "refId": "asc"
+                    }
+                ]
+            }
+        ],
+        "required": [
+            "requesterUserId",
+            "requesterUserName",
+            "requesteeUserId",
+            "requesteeUserName",
+            "encAddress",
+            "encSatoshis",
+            "timestamp",
+            "refId"
+        ],
+        "properties": {
+            "memo": {
+                "type": "string"
+            },
+            "refId": {
+                "type": "string",
+                "maxLength": 62,
+                "minLength": 0
+            },
+            "timestamp": {
+                "type": "integer"
+            },
+            "contractId": {
+                "type": "string",
+                "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
+                "maxLength": 44,
+                "minLength": 42
+            },
+            "encAddress": {
+                "type": "string"
+            },
+            "encSatoshis": {
+                "type": "string"
+            },
+            "encFiatAmount": {
+                "type": "string"
+            },
+            "encFiatSymbol": {
+                "type": "string"
+            },
+            "requesteeUserId": {
+                "type": "string",
+                "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
+                "maxLength": 44,
+                "minLength": 42
+            },
+            "requesterUserId": {
+                "type": "string",
+                "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
+                "maxLength": 44,
+                "minLength": 42
+            },
+            "requesteeUserName": {
+                "type": "string",
+                "pattern": "^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])$",
+                "maxLength": 62,
+                "minLength": 0
+            },
+            "requesterUserName": {
+                "type": "string",
+                "pattern": "^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])$",
+                "maxLength": 62
+            }
+        },
+        "additionalProperties": false
+    }
+}

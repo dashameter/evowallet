@@ -116,7 +116,6 @@ let client
 let clientTimeout
 let registerIdentityInterval
 let registerNameInterval
-let registerUserInterval
 let loginPinInterval
 
 const getInitState = () => {
@@ -130,9 +129,10 @@ const getInitState = () => {
     isSyncing: false,
     // mnemonic: null, // "drastic raise hurry step always person bundle end humble toss estate inner",
     // mnemonic:
-    // 'olympic dance spider bid soap butter cradle penalty waste sand situate vessel',
+    //   'detect clay law expect vehicle invest garage remove evidence gap indoor lounge',
     mnemonic: null,
     identityId: null,
+    // identityId: '689nqoGc9bA8RBZbJrBbvU6Jog9Y9cTXGaDdejyxpLjK',
     loginPin: '',
     loginPinTimeLeft: 0,
     curActionRequest: {},
@@ -143,6 +143,12 @@ const getInitState = () => {
       isValid: false,
       docId: null,
     },
+    // name: {
+    //   label: 'hithere2',
+    //   isRegistered: true,
+    //   isValid: true,
+    //   docId: 'cztisiXN8HbjRqCZyY5KCZxKELHkK7ddnrKHBm1n8MS',
+    // },
     snackbar: {},
     signups: [],
   }
@@ -293,7 +299,9 @@ export const mutations = {
     state.name.isRegistered = false
   },
   setNameRegistered(state, isRegistered) {
+    console.log('isRegistered :>> ', isRegistered)
     state.name.isRegistered = isRegistered
+    console.log('state.name.isRegistered :>> ', state.name.isRegistered)
   },
   setNameValid(state, isValid) {
     state.name.isValid = isValid
@@ -681,45 +689,68 @@ export const actions = {
 
     const balance = client.account.getTotalBalance()
     console.log('Total Balance: ' + balance)
-    if (balance > 500000) {
-      if (state.identityId === null) {
-        try {
-          this.registerIdentity()
-        } catch (e) {
-          console.log('No success in registering an identity, trying again ...')
-          dispatch('showSnackbar', {
-            text: e.message,
-          })
-          this.registerIdentity()
-        }
-      } else {
-        console.log('Found existing identityId')
-        console.log(state.identityId)
-      }
+
+    // If an identity exists on the mnemonic recover it and add to state,
+    // otherwise register a fresh one
+    const identities = await client.account.getIdentityIds()
+
+    if (identities[0]) commit('setIdentity', identities[0])
+    // if (balance > 500000) {
+    //   if (state.identityId === null) {
+    //     try {
+    //       await dispatch('registerIdentity')
+    //     } catch (e) {
+    //       console.log('No success in registering an identity, trying again ...')
+    //       await dispatch('showSnackbar', {
+    //         text: e.message,
+    //       })
+    //       await dispatch('registerIdentity')
+    //     }
+    //   } else {
+    //     console.log('Found existing identityId')
+    //     console.log(state.identityId)
+    //   }
+    // } else {
+    //   try {
+    //     // TODO reenable faucet
+    //     await dispatch('getMagicInternetMoney')
+    //   } catch (e) {
+    //     commit(
+    //       'setClientErrors',
+    //       e.message +
+    //         ' | Faucet not responding, manually send some evoDash to ' +
+    //         (await dispatch('freshAddress'))
+    //     )
+    //   }
+
+    // TODO need to check if identity belongs to mnemonic
+    if (state.identityId === null) {
+      console.log('No identity found, registering a fresh one ..')
+      await dispatch('registerIdentityOnceBalance')
     } else {
-      try {
-        // TODO reenable faucet
-        await dispatch('getMagicInternetMoney')
+      console.log('Found existing identityId', state.identityId)
 
-        // await this.getMagicInternetMoney( // get two drips -> two UTXOs, register idenity and name without waiting for chained confirmations
-        // console.log('not getting a drip, faucet is broken')
-      } catch (e) {
-        commit(
-          'setClientErrors',
-          e.message +
-            ' | Faucet not responding, manually send some evoDash to ' +
-            (await dispatch('freshAddress'))
-        )
-      }
-
-      // TODO need to check if identity belongs to mnemonic
-      if (state.identityId === null) {
-        dispatch('registerIdentityOnceBalance')
-      } else {
-        console.log('Found existing identityId')
-        console.log(state.identityId)
+      // If a unique name is registered on the identityId, recover it,
+      // otherwise the user gets to choose and register a name
+      console.log('state.identityId :>> ', state.identityId)
+      const dpnsResult = await client.platform.names.resolveByRecord(
+        'dashUniqueIdentityId',
+        state.identityId
+      )
+      console.log(
+        'dpnsResult.toJSON() :>> ',
+        dpnsResult.map((x) => x.toJSON())
+      )
+      if (dpnsResult[0]) {
+        const dpnsDoc = dpnsResult[0].toJSON()
+        console.log('dpnsDoc :>> ', dpnsDoc)
+        commit('setName', dpnsDoc.label)
+        commit('setNameDocId', dpnsDoc.$id)
+        commit('setNameValid', true)
+        commit('setNameRegistered', true)
       }
     }
+    // }
   },
   resetStateKeepAccounts({ state, commit }) {
     console.log({ state })
@@ -739,7 +770,6 @@ export const actions = {
     clearInterval(loginPinInterval)
     clearInterval(registerIdentityInterval)
     clearInterval(registerNameInterval)
-    clearInterval(registerUserInterval)
     clearTimeout(clientTimeout)
 
     if (client) client.disconnect()
@@ -1004,59 +1034,60 @@ export const actions = {
         pin: mnemonicPin,
       })
     ) // TODO DEPLOY ask user for pin
-    client = new Dash.Client({
-      dapiAddresses: [
-        '54.212.206.131:3000',
-        // '54.184.89.215:3000',
-        '35.167.241.7:3000',
-        '54.244.159.60:3000',
-        '34.219.79.193:3000',
-        '34.223.226.20:3000',
-        '34.216.133.190:3000',
-        '52.88.13.87:3000',
-        '54.203.2.102:3000',
-        '18.236.73.143:3000',
-        '54.187.128.127:3000',
-        '54.190.136.191:3000',
-        '35.164.4.147:3000',
-        '54.189.121.60:3000',
-        '54.149.181.16:3000',
-        '54.202.214.68:3000',
-        '34.221.5.65:3000',
-        '34.219.43.9:3000',
-        '54.190.1.129:3000',
-        '54.186.133.94:3000',
-        '54.190.26.250:3000',
-        '52.88.38.138:3000',
-        // '34.221.185.231:3000',
-        '54.189.73.226:3000',
-        '34.220.38.59:3000',
-        '54.186.129.244:3000',
-        '52.32.251.203:3000',
-        '54.184.71.154:3000',
-        '54.186.22.30:3000',
-        '54.185.186.111:3000',
-        '34.222.91.196:3000',
-        // '54.245.217.116:3000',
-        '54.244.203.43:3000',
-        '54.69.71.240:3000',
-        '52.88.52.65:3000',
-        '18.236.139.199:3000',
-        '52.33.251.111:3000',
-        '54.188.72.112:3000',
-        // '52.33.97.75:3000',
-        '54.200.73.105:3000',
-        '18.237.194.30:3000',
-        '52.25.73.91:3000',
-        // '18.237.255.133:3000',
-        '34.214.12.133:3000',
-        '54.149.99.26:3000',
-        '18.236.235.220:3000',
-        // '35.167.226.182:3000',
-        '34.220.159.57:3000',
-        '54.186.145.12:3000',
-        // '34.212.169.216:3000',
-      ],
+    let clientOpts = {
+      dapiAddresses: process.env.DAPIADDRESSES,
+      // dapiAddresses: [
+      //   '54.212.206.131:3000',
+      //   // '54.184.89.215:3000',
+      //   '35.167.241.7:3000',
+      //   '54.244.159.60:3000',
+      //   '34.219.79.193:3000',
+      //   '34.223.226.20:3000',
+      //   '34.216.133.190:3000',
+      //   '52.88.13.87:3000',
+      //   '54.203.2.102:3000',
+      //   '18.236.73.143:3000',
+      //   '54.187.128.127:3000',
+      //   '54.190.136.191:3000',
+      //   '35.164.4.147:3000',
+      //   '54.189.121.60:3000',
+      //   '54.149.181.16:3000',
+      //   '54.202.214.68:3000',
+      //   '34.221.5.65:3000',
+      //   '34.219.43.9:3000',
+      //   '54.190.1.129:3000',
+      //   '54.186.133.94:3000',
+      //   '54.190.26.250:3000',
+      //   '52.88.38.138:3000',
+      //   // '34.221.185.231:3000',
+      //   '54.189.73.226:3000',
+      //   '34.220.38.59:3000',
+      //   '54.186.129.244:3000',
+      //   '52.32.251.203:3000',
+      //   '54.184.71.154:3000',
+      //   '54.186.22.30:3000',
+      //   '54.185.186.111:3000',
+      //   '34.222.91.196:3000',
+      //   // '54.245.217.116:3000',
+      //   '54.244.203.43:3000',
+      //   '54.69.71.240:3000',
+      //   '52.88.52.65:3000',
+      //   '18.236.139.199:3000',
+      //   '52.33.251.111:3000',
+      //   '54.188.72.112:3000',
+      //   // '52.33.97.75:3000',
+      //   '54.200.73.105:3000',
+      //   '18.237.194.30:3000',
+      //   '52.25.73.91:3000',
+      //   // '18.237.255.133:3000',
+      //   '34.214.12.133:3000',
+      //   '54.149.99.26:3000',
+      //   '18.236.235.220:3000',
+      //   // '35.167.226.182:3000',
+      //   '34.220.159.57:3000',
+      //   '54.186.145.12:3000',
+      //   // '34.212.169.216:3000',
+      // ],
       wallet: {
         mnemonic: await dispatch('decryptMnemonic', {
           encMnemonic: state.mnemonic,
@@ -1064,20 +1095,26 @@ export const actions = {
         }),
       },
       apps: {
-        // dpns: {
-        //   contractId: '7PBvxeGpj7SsWfvDSa31uqEMt58LAiJww7zNcVRP1uEM',
-        // },
-
-        users: { contractId: '9xUQuDE95yx5o2oVGWqvG94ETmqdxf6LC5d6Lagiux4K' },
+        dpns: process.env.DPNS,
         primitives: {
-          contractId: 'J2jZkuK53qXQybna2UUYTHGA48XKRWFucyhi6cLk3foc',
+          contractId: process.env.PRIMITIVES_CONTRACT_ID,
         },
-        jembe: { contractId: 'FbsTSaHhPP5DdFtiaXdqE9p9fut9wh3N5a2yVsiEYFpT' },
         PaymentRequest: {
-          contractId: '2Hw6XoB289LJ8d6QEvgq9whvvB7qY5vZKKHXSwGvhre9',
+          contractId: process.env.PAYMENTREQUEST_CONTRACT_ID,
         },
       },
-    })
+    }
+
+    // Remove undefined keys from object
+    clientOpts = JSON.parse(JSON.stringify(clientOpts))
+
+    console.log('clientOpts :>> ', clientOpts)
+
+    client = new Dash.Client(clientOpts)
+
+    Object.entries(client.getApps().apps).forEach(([name, entry]) =>
+      console.log(name, entry.contractId.toString())
+    )
 
     // Timeout isReady() since we can't catch timeout errors
     clientTimeout = setTimeout(() => {
@@ -1178,24 +1215,6 @@ export const actions = {
       }, 5000)
     }
   },
-  async registerUserOnceBalance({ state, dispatch }, { userDoc }) {
-    if (registerUserInterval) clearInterval(registerUserInterval)
-    console.log('Awaiting client ..')
-    // console.log('..client is ready.', clientReady)
-    const { account } = client
-    if (account.getConfirmedBalance() > 10000 && state.identityId) {
-      dispatch('registerUser', { userDoc })
-    } else {
-      registerUserInterval = setInterval(function () {
-        console.log('Waiting for positive balance to register name..')
-        console.log(client.account.getConfirmedBalance())
-        if (client.account.getConfirmedBalance() > 10000 && state.identityId) {
-          dispatch('registerUser')
-          clearInterval(registerUserInterval)
-        }
-      }, 5000)
-    }
-  },
   async refreshWalletBalance({ commit }) {
     if (client && client.wallet) {
       const account = await client.wallet.getAccount()
@@ -1231,7 +1250,9 @@ export const actions = {
         identity,
         document
       )
-      console.log('Broadcasting created document:', { createdDocument })
+      console.log('Broadcasting created document:', {
+        createdDocument: createdDocument.toJSON(),
+      })
 
       const documentBatch = {
         create: [createdDocument],
@@ -1246,65 +1267,12 @@ export const actions = {
       console.error('Something went wrong:', e)
     }
   },
-  async registerUser({ dispatch }, { userDoc }) {
-    console.log('Registering User with UserDoc: ', userDoc)
-    console.log('Registering User with UserDoc json: ', userDoc.toJSON())
-    console.log(state)
-    console.log(this.state.name.label)
-    console.log(this.state.identityId)
-    const identity = await client.platform.identities.get(this.state.identityId)
-    console.log('Found valid identity:')
-    console.log({ identity })
-
-    const { account } = client
-    const curIdentityHDKey = account.keyChain.HDPrivateKey
-    console.log({ publicKeyString: curIdentityHDKey.publicKey.toString() })
-
-    const publicKey = curIdentityHDKey.publicKey.toString()
-    // const identity = await client.platform.identities.get(this.state.identityId)
-
-    console.log('Registering user')
-    try {
-      const document = {
-        name: userDoc.data.label,
-        pubkey: publicKey,
-        dpnsDocId: userDoc.id,
-        identityId: userDoc.ownerId,
-      }
-      console.log({ document })
-
-      const payloadDocument = await client.platform.documents.create(
-        `users.Users`,
-        identity,
-        document
-      )
-
-      const documentBatch = {
-        create: [payloadDocument],
-        replace: [],
-        delete: [],
-      }
-
-      const submitStatus = await client.platform.documents.broadcast(
-        documentBatch,
-        identity
-      )
-      console.log(submitStatus)
-    } catch (e) {
-      dispatch('showSnackbar', {
-        text: e.message + ' | Choose a new name.',
-      })
-      this.commit('setSyncing', false)
-      console.log({ pub: identity.publicKeys[0].toString() })
-    }
-  },
   async registerName({ commit, dispatch }) {
     console.log('Registering Name with identityId: ')
     console.log(this.state.name.label)
     console.log(this.state.identityId)
     const identity = await client.platform.identities.get(this.state.identityId)
-    console.log('Found valid identity:')
-    console.log({ identity })
+    console.log('Found valid identity:', identity.toJSON())
 
     console.log('Registering name')
     try {
@@ -1320,12 +1288,11 @@ export const actions = {
           ['normalizedLabel', '==', this.state.name.label.toLowerCase()],
         ],
       })
-      console.log({ doc })
+      console.log({ doc: doc.toJSON() })
 
       // TODO refactor sessionStorage to match accounts
       commit('setNameDocId', doc.id)
       commit('setNameRegistered', true)
-      dispatch('registerUserOnceBalance', { userDoc: doc })
     } catch (e) {
       dispatch('showSnackbar', {
         text: e.message + ' | Choose a new name.',

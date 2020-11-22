@@ -99,30 +99,30 @@ export default {
       await this.$store.dispatch('initOrCreateAccount', {
         mnemonicPin: this.mnemonicPin,
       })
-      const pubkey = await this.getCurPubKey()
-      console.log('awaited init')
-      const queryOpts = {
-        limit: 1,
-        startAt: 1,
-        where: [['pubkey', '==', pubkey]],
-      } // derive pubkey
-      const documents = await this.queryDocuments({
-        dappName: 'users',
-        typeLocator: 'Users',
-        queryOpts,
-      })
-      console.log(documents)
-      const [userDoc] = documents
+      // const pubkey = await this.getCurPubKey()
+      console.log('LoginFooter.vue login() awaited init')
+      // const queryOpts = {
+      //   limit: 1,
+      //   startAt: 1,
+      //   where: [['pubkey', '==', pubkey]],
+      // } // derive pubkey
+      // const documents = await this.queryDocuments({
+      //   dappName: 'users',
+      //   typeLocator: 'Users',
+      //   queryOpts,
+      // })
+      // console.log(documents)
+      // const [userDoc] = documents
 
-      console.log('Restoring from mnemonic via userhashmap', userDoc)
-      // FXIME sort out which are actually async and are causing race conditions
+      // console.log('Restoring from mnemonic via userhashmap', userDoc)
+      // // FXIME sort out which are actually async and are causing race conditions
 
-      // this.$store.commit('setMnemonicAsIs', account.mnemonic)
-      await this.$store.commit('setIdentity', userDoc.data.identityId)
-      console.log('using name', userDoc.data.name)
-      await this.$store.commit('setName', userDoc.data.name)
-      await this.$store.commit('setNameRegistered', true)
-      await this.$store.commit('setNameDocId', userDoc.data.dpnsDocId)
+      // // this.$store.commit('setMnemonicAsIs', account.mnemonic)
+      // await this.$store.commit('setIdentity', userDoc.data.identityId)
+      // console.log('using name', userDoc.data.name)
+      // await this.$store.commit('setName', userDoc.data.name)
+      // await this.$store.commit('setNameRegistered', true)
+      // await this.$store.commit('setNameDocId', userDoc.data.dpnsDocId)
 
       // Add recovered User to accounts
       const { state } = this.$store

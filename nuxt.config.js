@@ -3,6 +3,20 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   mode: 'spa',
+  env: {
+    PRIMITIVES_CONTRACT_ID:
+      process.env.NUXT_PRIMITIVES_CONTRACT_ID ||
+      'J2jZkuK53qXQybna2UUYTHGA48XKRWFucyhi6cLk3foc',
+    PAYMENTREQUEST_CONTRACT_ID:
+      process.env.NUXT_PAYMENTREQUEST_CONTRACT_ID ||
+      '2Hw6XoB289LJ8d6QEvgq9whvvB7qY5vZKKHXSwGvhre9',
+    DAPIADDRESSES: process.env.NUXT_DAPIADDRESSES
+      ? JSON.parse(process.env.NUXT_DAPIADDRESSES)
+      : undefined,
+    DPNS: process.env.NUXT_DPNS_CONTRACT_ID
+      ? { contractId: process.env.NUXT_DPNS_CONTRACT_ID }
+      : undefined,
+  },
   router: {
     mode: 'hash',
   },
