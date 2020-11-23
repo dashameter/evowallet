@@ -65,6 +65,16 @@ export NUXT_DAPIADDRESSES="127.0.0.1:3000"
 
 ### Console
 
+
+Add the following environment variable to your `.env.local` in your `console` root project folder:
+
+```bash
+VUE_APP_DPNS_CONTRACT_ID=<your dpns id from mn-bootstrap>
+```
+
+Run:
+
+
 ```bash
 $ npm run serve
 ```
