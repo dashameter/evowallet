@@ -78,11 +78,30 @@ const registerContract = async (identityId, contractDocuments) => {
         } else {
           const newId = id.dataContract.id.toString()
 
-          console.log(
-            'Registered new contract: ',
-            path.basename(contractUrlswithHash[idx][0], '.json'),
-            newId
+          const contractName = path.basename(
+            contractUrlswithHash[idx][0],
+            '.json'
           )
+
+          console.log('Registered new contract: ', contractName, newId)
+
+          if (contractName === 'PRIMITIVES_CONTRACT') {
+            try {
+              fs.appendFileSync(
+                `/home/${process.env.USER}/.bashrc`,
+                `\nexport NUXT_${contractName}_ID=${newId}\n`
+              )
+
+              console.log('-> Appended', contractName, 'to ~/.bashrc')
+            } catch (e) {
+              console.log(e)
+              console.log(
+                'Add the',
+                contractName,
+                'to your environment variables manually to share it with other dApps..'
+              )
+            }
+          }
 
           return newId
         }
