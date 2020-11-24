@@ -4,6 +4,8 @@ const fs = require('fs')
 const Dash = require('dash')
 const glob = require('glob')
 
+const envRun = process.env.NUXT_ENV_RUN
+
 let clientOpts = {
   wallet: {
     // privateKey: 'currently throws a signing error'
@@ -20,19 +22,50 @@ clientOpts = JSON.parse(JSON.stringify(clientOpts))
 
 console.log('clientOpts :>> ', clientOpts)
 
-const client = new Dash.Client(clientOpts)
+let client, platform, identityId, identity
 
 let registeredContracts = {}
+
 try {
-  registeredContracts = require('./registeredContracts.json')
+  registeredContracts = require(`../env/registeredContracts_${envRun}.json`)
 } catch (e) {
-  console.log('\nregisteredContract.json not found, will create file ..\n')
+  console.log(
+    `\n./env/registeredContracts_${envRun}.json not found, will create file ..\n`
+  )
 }
 
-const registerContract = async (identityId, contractDocuments) => {
-  const platform = client.platform
-  const identity = await platform.identities.get(identityId)
+const initWalletAndIdentity = async () => {
+  if (!client) client = new Dash.Client(clientOpts)
 
+  if (!platform) platform = client.platform
+
+  if (!client.account) {
+    const startWalletSync = Date.now()
+
+    console.log('.. initializing wallet')
+
+    client.account = await client.getWalletAccount()
+
+    const walletTime = Math.floor((Date.now() - startWalletSync) / 1000)
+
+    console.log(`.. finished wallet sync in ${walletTime}s`)
+
+    console.log(
+      '\nReceiving address for wallet:\n',
+      client.account.getUnusedAddress().address,
+      '\n'
+    )
+  }
+
+  if (!identityId)
+    identityId =
+      client.account.getIdentityIds()[0] ||
+      (await platform.identities.register()).id.toString()
+
+  if (!identity) identity = await platform.identities.get(identityId)
+}
+
+const registerContract = async (contractDocuments) => {
   const contract = await platform.contracts.create(contractDocuments, identity)
 
   return platform.contracts.broadcast(contract, identity)
@@ -40,13 +73,6 @@ const registerContract = async (identityId, contractDocuments) => {
 
 ;(async () => {
   try {
-    client.account = await client.getWalletAccount()
-
-    let identityId = client.account.getIdentityIds()[0]
-
-    if (!identityId)
-      identityId = (await client.platform.identities.register()).id.toString()
-
     const contractUrls = glob.sync('./schema/*CONTRACT.json')
 
     const contractUrlswithHash = contractUrls.map((x) => [
@@ -57,12 +83,24 @@ const registerContract = async (identityId, contractDocuments) => {
         .digest('hex'),
     ])
 
+    // Check if there is a new contract, otherwise skip slow wallet initialization
+    for (let idx = 0; idx < contractUrlswithHash.length; idx++) {
+      const hash = contractUrlswithHash[idx][1]
+
+      if (!(hash in registeredContracts)) {
+        console.log('Found new contracts to register ..')
+        await initWalletAndIdentity()
+        break
+      }
+    }
+
+    // Register new contracts in parallel, if now new contracts exists returns old contracts
     const newRegisteredContractIdsPromises = contractUrlswithHash.map(
       ([url, hash]) => {
         if (hash in registeredContracts) {
           return registeredContracts[hash].id
         } else {
-          return registerContract(identityId, require(`../${url}`))
+          return registerContract(require(`../${url}`))
         }
       }
     )
@@ -83,16 +121,24 @@ const registerContract = async (identityId, contractDocuments) => {
             '.json'
           )
 
-          console.log('Registered new contract: ', contractName, newId)
+          console.log(
+            'Registered new contract: ',
+            `${contractName}_${envRun}`,
+            newId
+          )
 
           if (contractName === 'PRIMITIVES_CONTRACT') {
             try {
               fs.appendFileSync(
                 `/home/${process.env.USER}/.bashrc`,
-                `\nexport NUXT_${contractName}_ID=${newId}\n`
+                `\nexport NUXT_${contractName}_ID_${envRun}=${newId}\n`
               )
 
-              console.log('-> Appended', contractName, 'to ~/.bashrc')
+              console.log(
+                '-> Appended',
+                `${contractName}_${envRun}`,
+                'to ~/.bashrc'
+              )
             } catch (e) {
               console.log(e)
               console.log(
@@ -115,22 +161,27 @@ const registerContract = async (identityId, contractDocuments) => {
     })
 
     fs.writeFileSync(
-      './scripts/registeredContracts.json',
+      `./env/registeredContracts_${envRun}.json`,
       JSON.stringify(newRegisteredContracts)
     )
 
-    console.log('\nEnvironment variables:\n')
+    console.log(`\nContractIds for '${envRun}':\n`)
     let envVarString = ''
     Object.keys(newRegisteredContracts).forEach((hash) => {
       const { url, id } = newRegisteredContracts[hash]
-      envVarString += `export NUXT_${path.basename(url, '.json')}_ID=${id}\n`
-      console.log(`export NUXT_${path.basename(url, '.json')}_ID=${id}`)
+      envVarString += `export NUXT_${path.basename(
+        url,
+        '.json'
+      )}_ID_${envRun}=${id}\n`
+      console.log(
+        `export NUXT_${path.basename(url, '.json')}_ID_${envRun}=${id}`
+      )
     })
 
-    fs.writeFileSync('./scripts/datacontracts.env', envVarString)
+    fs.writeFileSync(`./env/datacontracts_${envRun}.env`, envVarString)
   } catch (e) {
     console.log(e)
   } finally {
-    client.disconnect()
+    if (client) client.disconnect()
   }
 })()

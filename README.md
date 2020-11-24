@@ -8,15 +8,15 @@
 # install dependencies
 $ npm install
 
-# serve with hot reload 
-$ npm run dev
+# serve with hot reload for local development
+$ npm run local
+
+# serve with hot reload for evonet development
+$ npm run evonet
 
 # build for production and launch server
 $ npm run build
 $ npm run start
-
-# generate static project
-$ npm run generate
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
@@ -29,15 +29,26 @@ For detailed explanation on how things work, check out [Nuxt.js docs](https://nu
 
 
 ## MN Bootstrap
-for addtitional details see https://github.com/dashevo/mn-bootstrap#install
 
-Run:
+This tutorial assumes you are starting with a clean `mn-bootstrap` and have no existing configurations. For advanced configuration options see: https://github.com/dashevo/mn-bootstrap#install
+
+To reset your existing `mn-bootstrap` or if you encounter an error run:
+
+```bash
+$ mn reset
+$ mn config:reset
+```
+
+###Setup
 
 ```bash
 $ git clone -b master https://github.com/dashevo/mn-bootstrap.git
 $ cd mn-bootstrap
-$ node bin/mn setup-for-local-development # save output for later reference
-$ node bin/mn start
+$ npm install # optional: install CLI dependencies
+$ sudo npm link # optional: link CLI for system-wide execution
+$ mn config:default local
+$ mn setup-for-local-development # save output for later reference
+$ mn start
 ```
 
 
@@ -47,23 +58,25 @@ Find the dpns contractId in the output and export to your environment (e.g. `.ba
 export NUXT_DPNS_CONTRACT_ID="<your dpns contractId>"
 ```
 
-If you encounter an error with `mn-bootstrap` try running:
-
-```bash
-$ node bin/mn reset
-$ node bin/mn config:reset
-```
-
-and repeating the setup commands above.
 ## Console, EvoWallet, Jembe
 
 Add the following environment variable to your `.bashrc`:
 
 ```bash
-export NUXT_DAPIADDRESSES="127.0.0.1:3000"
+export NUXT_DAPIADDRESSES='["127.0.0.1:3000"]' # or your local network ip e.g. 192.168.0.1
 ```
 
-### Console
+*Clue:*
+To find your local network ip you can use `ifconfig`:
+
+```bash
+ifconfig <my interface> | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*'
+```
+Replace <my interface> with e.g. `eth0` or `wlp2s0` depending on your system configuration.
+
+
+
+### [Console](https://github.com/dashameter/dash-platform-console)
 
 
 Add the following environment variable to your `.env.local` in your `console` root project folder:
@@ -82,16 +95,16 @@ $ npm run serve
 Copy the receiving address and run in `mn-bootstrap`:
 
 ```bash
-$ node bin/mn stop
-$ node bin/mn core.miner.enable true
-$ node bin/mn core.miner.address <your address>
-$ node bin/mn wallet:mint 1 # generate 100 blocks
-$ node bin/mn start
+$ mn stop
+$ mn config:set core.miner.enable true
+$ mn config:set core.miner.address <your address>
+$ mn wallet:mint 1 --address=<your address> # generate 100 blocks
+$ mn start
 ```
 
 In `Console` go to the `Wallet` tab, click `Backup` and `Copy` to copy the mnemonic.
 
-Add it to your `.bashrc` to make it available to `EvoWallet` and `Jembe`.
+Add it to your `.bashrc` to make it available to `AutoFaucet`, `EvoWallet` and `Jembe`.
 
 
 ```bash
@@ -102,57 +115,70 @@ export NUXT_MNEMONIC="<your mnemonic>"
 Selecting the `Platform` tab click the `+` Button to create a new identity and register a username in the input field that appears below.
 
 
+### [AutoFaucet](https://github.com/dashameter/autofaucet-express)
 
+To start run:
 
-### EvoWallet
-
-If the execution permission is not set, add it:
-
-```bash
-$ chmod +x scripts/source-datacontracts.sh
 ```
+$ node index.js
+```
+
+It uses the `mnemonic` which is funded by the miner.
+
+`EvoWallet` and `Jembe` will automatically point to it to receive local / devnet Dash to fund identity creation.
+
+
+### [EvoWallet](https://github.com/dashameter/evowallet)
 
 To register the contracts under `./schema`, add their `contractIds` to your environment variables and start `EvoWallet` simply run:
 
 ```bash
 npm run local
+# or
+npm run evonet
+# or
+npm run build
 ```
 
 *Clue:* 
-If you make any changes to the contracts schemas just quit and re-rerun the command to run the dapp with the updated contract version.
+If you make any changes to the contracts' schemas just quit and re-rerun the command to run the dapp with the updated contract version.
 
-Add the `Primitives` contract to your `.bashrc` to make it available to `Jembe`: 
+The `Primitives` contract is added automatically to your `.bashrc` to make it available to `Jembe`: 
 
 ```bash
-export NUXT_PRIMITIVES_CONTRACT_ID=<your contractId from EvoWallet>
+export NUXT_PRIMITIVES_CONTRACT_ID_local=<your contractId from EvoWallet>
 ```
 
 **Option 1**
-Watch the debug console for the funding address and send some Dash to it using `console`.
+`EvoWallet` Should automatically receive Dash from the running `AutoFaucet`. Go ahead and register a new name.
 
 **Option 2**
-Click `login` and paste the mnemonic you copied from `console` to recover the account.
+Watch the debug console for the funding address and send some Dash to it using `console`. Then register a new name.
+
+**Option 3**
+Click `login` and paste the mnemonic you copied from `console` to recover your previously registered name.
 
 
 
-### Jembe
-
-
-If the execution permission is not set, add it:
-
-```bash
-$ chmod +x scripts/source-datacontracts.sh
-```
+### [Jembe](https://github.com/dashameter/jembe)
 
 To register the contracts under `./schema`, add their `contractIds` to your environment variables and start `Jembe` simply run:
 
 ```bash
 npm run local
+# or
+npm run evonet
+# or
+npm run build
 ```
 
 *Clue:* 
 If you make any changes to the contracts schemas just quit and re-rerun the command to run the dapp with the updated contract version.
 
+
+`Jembe` Should automatically receive Dash from the running `AutoFaucet`. Go ahead and login.
+
+*Alternative Fact:*
 Watch the debug console for the funding address and send some Dash to it using `console`.
 
 

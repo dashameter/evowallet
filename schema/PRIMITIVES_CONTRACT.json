@@ -251,5 +251,94 @@
             }
         },
         "additionalProperties": false
+    },
+    "Session": {
+        "indices": [
+            {
+                "properties": [
+                    {
+                        "$createdAt": "desc"
+                    }
+                ]
+            },
+            {
+                "properties": [
+                    {
+                        "$updatedAt": "desc"
+                    }
+                ]
+            },
+            {
+                "properties": [
+                    {
+                        "sessionIdentityId": "asc"
+                    }
+                ]
+            },
+            {
+                "properties": [
+                    {
+                        "contractId": "asc"
+                    }
+                ]
+            },
+            {
+                "properties": [
+                    {
+                        "$ownerId": "asc"
+                    }
+                ]
+            },
+            {
+                "properties": [
+                    {
+                        "expiresAt": "asc"
+                    }
+                ]
+            },
+            {
+                "properties": [
+                    {
+                        "pubKey": "asc"
+                    }
+                ]
+            }
+        ],
+        "required": [
+            "$createdAt",
+            "$updatedAt",
+            "sessionIdentityId",
+            "contractId",
+            "pubKey",
+            "encPvtKey"
+        ],
+        "properties": {
+            "expiresAt": {
+                "type": "integer"
+            },
+            "sessionIdentityId": {
+                "type": "string",
+                "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
+                "maxLength": 44,
+                "minLength": 42
+            },
+            "contractId": {
+                "type": "string",
+                "pattern": "^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+$",
+                "maxLength": 44,
+                "minLength": 42
+            },
+            "encPvtKey": {
+                "type": "string",
+                "$comment": "Private key used to decrypt received direct messages."
+            },
+            "pubKey": {
+                "type": "string",
+                "maxLength": 1024,
+                "minLength": 0,
+                "$comment": "Public key used to receive direct messages."
+            }
+        },
+        "additionalProperties": false
     }
 }

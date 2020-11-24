@@ -3,13 +3,18 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   mode: 'spa',
+  server: {
+    // Enable to access on mobile via local network
+    host: '0.0.0.0',
+  },
   env: {
     PRIMITIVES_CONTRACT_ID:
-      process.env.NUXT_PRIMITIVES_CONTRACT_ID ||
+      process.env[`NUXT_PRIMITIVES_CONTRACT_ID_${process.env.NUXT_ENV_RUN}`] ||
       'J2jZkuK53qXQybna2UUYTHGA48XKRWFucyhi6cLk3foc',
     PAYMENTREQUEST_CONTRACT_ID:
-      process.env.NUXT_PAYMENTREQUEST_CONTRACT_ID ||
-      '2Hw6XoB289LJ8d6QEvgq9whvvB7qY5vZKKHXSwGvhre9',
+      process.env[
+        `NUXT_PAYMENTREQUEST_CONTRACT_ID_${process.env.NUXT_ENV_RUN}`
+      ] || '2Hw6XoB289LJ8d6QEvgq9whvvB7qY5vZKKHXSwGvhre9',
     DAPIADDRESSES: process.env.NUXT_DAPIADDRESSES
       ? JSON.parse(process.env.NUXT_DAPIADDRESSES)
       : undefined,

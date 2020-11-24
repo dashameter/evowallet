@@ -90,5 +90,3 @@ sw.*
 *.swp
 
 CNAME
-scripts/datacontracts.env
-scripts/registeredContracts.json

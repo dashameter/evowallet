@@ -37,8 +37,8 @@ const cachedOrGetIdentity = async (client, identityId) => {
 
 // TODO remove dependence on global var 'client'
 // eslint-disable-next-line no-unused-vars
-async function deriveDip9DelegatedCredentialsFromTimestamp(timestamp) {
-  console.log('deriveDip9DelegatedCredentialsFromTimestamp()')
+async function deriveDip9SessionFromTimestamp(timestamp) {
+  console.log('deriveDip9SessionFromTimestamp()')
   const curIdentityHDKey = client.account.keyChain.HDPrivateKey
   console.log({ curIdentityHDKey })
   const specialFeatureKey = curIdentityHDKey.derive(
@@ -59,7 +59,7 @@ async function deriveDip9DelegatedCredentialsFromTimestamp(timestamp) {
 }
 
 async function deriveDip9KeyPair(x) {
-  console.log('deriveDip9DelegatedCredentialsFromTimestamp()')
+  console.log('deriveDip9SessionFromTimestamp()')
   const curIdentityHDKey = client.account.keyChain.HDPrivateKey
   console.log({ curIdentityHDKey })
   const specialFeatureKey = curIdentityHDKey.derive(
@@ -690,6 +690,8 @@ export const actions = {
     const balance = client.account.getTotalBalance()
     console.log('Total Balance: ' + balance)
 
+    if (balance < 1000000) await dispatch('getMagicInternetMoney')
+
     // If an identity exists on the mnemonic recover it and add to state,
     // otherwise register a fresh one
     const identities = await client.account.getIdentityIds()
@@ -842,9 +844,9 @@ export const actions = {
     let fragment = {}
 
     // eslint-disable-next-line no-unused-vars
-    let addDelegatedCredentials = false
-    if (primitiveType != 'DelegatedCredentials') {
-      // TODO DelegatedCredentials should be its own request type, not DocumentActionRequest
+    let addSession = false
+    if (primitiveType != 'Session') {
+      // TODO Session should be its own request type, not DocumentActionRequest
 
       Object.assign(fragment, payload[primitiveType])
       fragment.$createdAt = timestamp
@@ -867,52 +869,48 @@ export const actions = {
 
       // If user signs up, also log him in
       if (primitiveType === 'Signup' && document.data.isRegistered === true) {
-        addDelegatedCredentials = true
+        addSession = true
       }
     }
 
-    // TODO DelegatedCredentials should be its own request type, not DocumentActionRequest
-    if (primitiveType === 'DelegatedCredentials' || addDelegatedCredentials) {
-      // Delegated Credentials that are valid for authenticated session length
-      const {
-        privateKey,
-        publicKey,
-      } = await deriveDip9DelegatedCredentialsFromTimestamp(timestamp)
+    // TODO Session should be its own request type, not DocumentActionRequest
+    if (primitiveType === 'Session' || addSession) {
+      // Sessions that are valid for authenticated session length
 
-      console.log(actionRequest.doc)
+      console.log('actionRequest.doc', actionRequest.doc)
 
-      const delegateIdentityId = actionRequest.doc.$ownerId
+      const sessionIdentityId = actionRequest.doc.$ownerId
+      const contractId = actionRequest.doc.contractId
 
       fragment = {
-        encPvtKey: await dispatch('encryptDelegatedPrivKey', {
-          delCredPrivKey: privateKey,
-          identityId: delegateIdentityId,
-        }),
-        pubKey: publicKey,
-        delegateIdentityId, // Using the idenity of the doc that was verified against pin
+        sessionIdentityId, // Using the idenity of the doc that was verified against pin
+        contractId,
         expiresAt: timestampMS + 1200000, // TODO change 20min (1200s) timeout to variable
-        //  timestamp = Math.floor(Date.now() / 1000) // For next contract iteration
       }
 
       // Decrypt key (e.g. for direct messages), valid across sessions until disabled
       // FIXME this key should be registered in the identity
       const decryptKeyPair = await deriveDip9KeyPair(0)
+      console.log('decryptKeyPair :>> ', decryptKeyPair)
 
-      console.log('{ privateKey, publicKey } :>> ', { privateKey, publicKey })
+      // console.log('{ privateKey, publicKey } :>> ', { privateKey, publicKey })
 
-      fragment.decryptPubKey = decryptKeyPair.publicKey
+      fragment.pubKey = decryptKeyPair.publicKey
 
-      fragment.encDecryptPrivKey = await dispatch('encryptDelegatedPrivKey', {
+      fragment.encPvtKey = await dispatch('encryptDelegatedPrivKey', {
         delCredPrivKey: decryptKeyPair.privateKey,
-        identityId: delegateIdentityId,
+        identityId: sessionIdentityId,
       })
+
+      console.log('fragment :>> ', fragment)
 
       // Create document from fragment and add to batch broadcast array
       const document = await client.platform.documents.create(
-        `primitives.DelegatedCredentials`, // TODO make contractId + typeselector dynamic
+        `primitives.Session`, // TODO make contractId + typeselector dynamic
         userIdentity,
         fragment // TODO make dynamic
       )
+      console.log('document :>> ', document)
       documents.push(document)
     }
 
@@ -1153,11 +1151,14 @@ export const actions = {
       //   `http://localhost:5000/evodrip/us-central1/evofaucet/drip/${address}`
       // )
       const reqs = [
-        this.$axios.get(
-          `https://us-central1-evodrip.cloudfunctions.net/evofaucet/bigdrip/${address}`
-        ),
-        this.$axios.get(`http://134.122.104.155:5050/bigdrip/${address}`),
+        this.$axios.get(`http://134.122.104.155:5050/drip/${address}`),
       ]
+
+      if (process.env.DAPIADDRESSES && process.env.DAPIADDRESSES[0]) {
+        const ip = process.env.DAPIADDRESSES[0].split(':')[0]
+        reqs.push(this.$axios.get(`http://${ip}:5050/drip/${address}`))
+      }
+
       await Promise.race(reqs)
       console.log('... faucet dropped.')
       console.log(reqs)

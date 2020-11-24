@@ -5,9 +5,9 @@
   "author": "dashameter",
   "private": true,
   "scripts": {
-    "dev": "nuxt --port 3331",
-    "local": "node ./scripts/registerContracts.js && ./scripts/source-datacontracts.sh",
-    "build": "nuxt build",
+    "evonet": "./scripts/runEvonet.sh",
+    "local": "./scripts/runLocal.sh",
+    "build": "./scripts/runBuildEvonet.sh",
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --fix --ext .js,.vue --ignore-path .gitignore ."

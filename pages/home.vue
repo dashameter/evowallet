@@ -390,7 +390,7 @@ export default {
         console.log({ isPaymentRequestNew })
 
         // We have an new (unseen), legitimate (pinVerified) ActionRequest, set notification details for approval
-        // if (isPinVerified && isPaymentRequestNew) { // TODO sync PIN time to delegatedCredentials time
+        // if (isPinVerified && isPaymentRequestNew) { // TODO sync PIN time to session time
         if (true && isPaymentRequestNew) {
           // eslint-disable-next-line no-constant-condition
           // if (true) {
@@ -541,7 +541,7 @@ export default {
         console.log({ isPaymentRequestNew })
 
         // We have an new (unseen), legitimate (pinVerified) ActionRequest, set notification details for approval
-        // if (isPinVerified && isPaymentRequestNew) { // TODO sync PIN time to delegatedCredentials time
+        // if (isPinVerified && isPaymentRequestNew) { // TODO sync PIN time to session time
         if (true && isPaymentRequestNew) {
           const { satoshis, toAddress } = paymentRequest
           const dashAmount = Unit.fromSatoshis(satoshis).to(Unit.BTC)
