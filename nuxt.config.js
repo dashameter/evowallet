@@ -21,6 +21,7 @@ export default {
     DPNS: process.env.NUXT_DPNS_CONTRACT_ID
       ? { contractId: process.env.NUXT_DPNS_CONTRACT_ID }
       : undefined,
+    LOCALNODE: !!process.env.NUXT_LOCALNODE,
   },
   router: {
     mode: 'hash',

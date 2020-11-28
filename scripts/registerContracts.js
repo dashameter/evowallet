@@ -4,9 +4,12 @@ const fs = require('fs')
 const Dash = require('dash')
 const glob = require('glob')
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
 const envRun = process.env.NUXT_ENV_RUN
 
 let clientOpts = {
+  passFakeAssetLockProofForTests: process.env.NUXT_LOCALNODE,
   wallet: {
     // privateKey: 'currently throws a signing error'
     mnemonic: process.env.NUXT_MNEMONIC,
@@ -55,12 +58,26 @@ const initWalletAndIdentity = async () => {
       client.account.getUnusedAddress().address,
       '\n'
     )
+
+    const confirmedBalance = client.account.getConfirmedBalance()
+    const unconfirmedBalance = client.account.getUnconfirmedBalance()
+
+    console.log('confirmedBalance :>> ', confirmedBalance)
+    console.log('unconfirmedBalance :>> ', unconfirmedBalance)
   }
 
-  if (!identityId)
-    identityId =
-      client.account.getIdentityIds()[0] ||
-      (await platform.identities.register()).id.toString()
+  while (!identityId) {
+    try {
+      identityId =
+        client.account.getIdentityIds()[0] ||
+        (await platform.identities.register()).id.toString()
+    } catch (e) {
+      console.log('Identity register error', e)
+      console.dir(e, { depth: 100 })
+      console.log('Trying again..')
+      await sleep(5000)
+    }
+  }
 
   if (!identity) identity = await platform.identities.get(identityId)
 }
@@ -68,7 +85,18 @@ const initWalletAndIdentity = async () => {
 const registerContract = async (contractDocuments) => {
   const contract = await platform.contracts.create(contractDocuments, identity)
 
-  return platform.contracts.broadcast(contract, identity)
+  let result = undefined
+
+  while (!result) {
+    try {
+      result = platform.contracts.broadcast(contract, identity)
+    } catch (e) {
+      console.log('register error', e)
+      console.log('result so far', result)
+      await sleep(5000)
+    }
+  }
+  return result
 }
 
 ;(async () => {
@@ -130,14 +158,14 @@ const registerContract = async (contractDocuments) => {
           if (contractName === 'PRIMITIVES_CONTRACT') {
             try {
               fs.appendFileSync(
-                `/home/${process.env.USER}/.bashrc`,
+                `/home/${process.env.USER}/.evoenv`,
                 `\nexport NUXT_${contractName}_ID_${envRun}=${newId}\n`
               )
 
               console.log(
                 '-> Appended',
                 `${contractName}_${envRun}`,
-                'to ~/.bashrc'
+                'to ~/.evoenv'
               )
             } catch (e) {
               console.log(e)
@@ -180,7 +208,9 @@ const registerContract = async (contractDocuments) => {
 
     fs.writeFileSync(`./env/datacontracts_${envRun}.env`, envVarString)
   } catch (e) {
+    console.log('Something went wrong')
     console.log(e)
+    console.dir(e, { depth: 100 })
   } finally {
     if (client) client.disconnect()
   }

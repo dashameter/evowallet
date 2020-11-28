@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source ~/.bashrc
+source ~/.evoenv
 
 unset NUXT_DAPIADDRESSES
 unset NUXT_DPNS_CONTRACT_ID
@@ -16,4 +16,4 @@ echo
 printenv | grep NUXT
 echo
 
-nuxt --port 3331
+nuxt --port 3340

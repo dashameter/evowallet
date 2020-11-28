@@ -2,7 +2,7 @@
     "Signup": {
         "indices": [
             {
-                "unique": false,
+                "unique": true,
                 "properties": [
                     {
                         "accountDocId": "asc"
@@ -23,10 +23,20 @@
                         "$createdAt": "desc"
                     }
                 ]
+            },
+            {
+                "unique": true,
+                "properties": [
+                    {
+                        "normalizedLabel": "asc"
+                    }
+                ]
             }
         ],
         "required": [
             "accountDocId",
+            "normalizedLabel",
+            "label",
             "contractId",
             "$createdAt",
             "dappName",
@@ -34,6 +44,18 @@
             "isRegistered"
         ],
         "properties": {
+            "label": {
+                "type": "string",
+                "pattern": "^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9])$",
+                "maxLength": 63
+            },
+            "normalizedLabel": {
+                "type": "string",
+                "pattern": "^((?!-)[a-z0-9-]{0,62}[a-z0-9])$",
+                "$comment": "Must be equal to the label in lowercase. This property will be deprecated due to case insensitive indices",
+                "maxLength": 63,
+                "description": "Domain label in lowercase for case-insensitive uniqueness validation. e.g. 'bob'"
+            },
             "dappIcon": {
                 "type": "string"
             },

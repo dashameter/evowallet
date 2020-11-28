@@ -851,6 +851,8 @@ export const actions = {
       Object.assign(fragment, payload[primitiveType])
       fragment.$createdAt = timestamp
       fragment.accountDocId = getters['curAccountDocId'] // TODO V2 should be userId
+      fragment.normalizedLabel = state.name.label.toLowerCase()
+      fragment.label = state.name.label
       fragment.contractId = actionRequest.doc.$dataContractId
       // dappName TODO currently insecure duplication by dApp Browser
       // dappIcon
@@ -1033,6 +1035,7 @@ export const actions = {
       })
     ) // TODO DEPLOY ask user for pin
     let clientOpts = {
+      passFakeAssetLockProofForTests: process.env.LOCALNODE,
       dapiAddresses: process.env.DAPIADDRESSES,
       // dapiAddresses: [
       //   '54.212.206.131:3000',
@@ -1157,6 +1160,7 @@ export const actions = {
       if (process.env.DAPIADDRESSES && process.env.DAPIADDRESSES[0]) {
         const ip = process.env.DAPIADDRESSES[0].split(':')[0]
         reqs.push(this.$axios.get(`http://${ip}:5050/drip/${address}`))
+        // reqs.push(this.$axios.get(`http:/127.0.0.1:5050/drip/${address}`))
       }
 
       await Promise.race(reqs)

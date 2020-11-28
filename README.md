@@ -28,39 +28,46 @@ For detailed explanation on how things work, check out [Nuxt.js docs](https://nu
 
 
 
-## MN Bootstrap
+## [MN Bootstrap](https://github.com/dashevo/mn-bootstrap)
 
 This tutorial assumes you are starting with a clean `mn-bootstrap` and have no existing configurations. For advanced configuration options see: https://github.com/dashevo/mn-bootstrap#install
 
 To reset your existing `mn-bootstrap` or if you encounter an error run:
 
 ```bash
-$ mn reset
-$ mn config:reset
+mn reset
+docker volume prune
+rm -rf ~/.mn
 ```
 
-###Setup
+### Setup
 
 ```bash
-$ git clone -b master https://github.com/dashevo/mn-bootstrap.git
-$ cd mn-bootstrap
-$ npm install # optional: install CLI dependencies
-$ sudo npm link # optional: link CLI for system-wide execution
-$ mn config:default local
-$ mn setup-for-local-development # save output for later reference
-$ mn start
+git clone -b master https://github.com/dashevo/mn-bootstrap.git
+cd mn-bootstrap
+npm install # optional: install CLI dependencies
+sudo npm link # optional: link CLI for system-wide execution
+mn setup local # save output for later reference
+mn start
 ```
 
 
-Find the dpns contractId in the output and export to your environment (e.g. `.bashrc`):
+Find the dpns contractId in the output and export to `.evoenv` in your home folder (e.g. `~/.evoenv`):
 
 ```bash
 export NUXT_DPNS_CONTRACT_ID="<your dpns contractId>"
 ```
 
+and `source` the file by adding the following line to your `~/.bashrc`:
+
+```bash
+source ~/.evoenv
+```
+
+
 ## Console, EvoWallet, Jembe
 
-Add the following environment variable to your `.bashrc`:
+Add the following environment variable to your `~/.evoenv`:
 
 ```bash
 export NUXT_DAPIADDRESSES='["127.0.0.1:3000"]' # or your local network ip e.g. 192.168.0.1
@@ -104,7 +111,7 @@ $ mn start
 
 In `Console` go to the `Wallet` tab, click `Backup` and `Copy` to copy the mnemonic.
 
-Add it to your `.bashrc` to make it available to `AutoFaucet`, `EvoWallet` and `Jembe`.
+Add it to your `~/.evoenv` to make it available to `AutoFaucet`, `EvoWallet` and `Jembe`.
 
 
 ```bash
@@ -143,7 +150,7 @@ npm run build
 *Clue:* 
 If you make any changes to the contracts' schemas just quit and re-rerun the command to run the dapp with the updated contract version.
 
-The `Primitives` contract is added automatically to your `.bashrc` to make it available to `Jembe`: 
+The `Primitives` contract is added automatically to your `~/.evoenv` to make it available to `Jembe`: 
 
 ```bash
 export NUXT_PRIMITIVES_CONTRACT_ID_local=<your contractId from EvoWallet>

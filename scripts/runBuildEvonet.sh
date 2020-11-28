@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source ~/.bashrc
+source ~/.evoenv
 
 unset NUXT_DAPIADDRESSES
 unset NUXT_DPNS_CONTRACT_ID

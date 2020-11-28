@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source ~/.bashrc
+source ~/.evoenv
 
 export NUXT_ENV_RUN="local"
 
@@ -13,4 +13,4 @@ echo
 printenv | grep NUXT
 echo
 
-nuxt --port 3331
+nuxt --port 3330
