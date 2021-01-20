@@ -683,7 +683,7 @@ export const actions = {
       if (message === 'Expect mnemonic to be provided') {
         message = 'You entered the wrong PIN / Password.'
       }
-      commit('setClientErrors', 'Connecting to Evonet: ' + message)
+      commit('setClientErrors', 'Connecting to Testnet: ' + message)
     }
     console.log("I'm done awaiting client.isReady()....")
 
@@ -1119,7 +1119,7 @@ export const actions = {
 
     // Timeout isReady() since we can't catch timeout errors
     clientTimeout = setTimeout(() => {
-      commit('setClientErrors', 'Connection to Evonet timed out.')
+      commit('setClientErrors', 'Connection to Testnet timed out.')
     }, 500000) // TODO DEPLOY set sane timeout
     clearInterval(clientTimeout)
 
@@ -1154,8 +1154,10 @@ export const actions = {
       //   `http://localhost:5000/evodrip/us-central1/evofaucet/drip/${address}`
       // )
       const reqs = [
-        this.$axios.get(`http://134.122.104.155:5050/drip/${address}`),
-        this.$axios.get(`http://155.138.203.42:5050/drip/${address}`),
+        // this.$axios.get(`http://134.122.104.155:5050/drip/${address}`),
+        // this.$axios.get(`http://155.138.203.42:5050/drip/${address}`),
+        this.$axios.get(`http://autofaucet-1.dashevo.io:5050/drip/${address}`),
+        this.$axios.get(`http://autofaucet-2.dashevo.io:5050/drip/${address}`),
       ]
 
       if (process.env.DAPIADDRESSES && process.env.DAPIADDRESSES[0]) {
