@@ -1155,6 +1155,7 @@ export const actions = {
       // )
       const reqs = [
         this.$axios.get(`http://134.122.104.155:5050/drip/${address}`),
+        this.$axios.get(`http://155.138.203.42:5050/drip/${address}`),
       ]
 
       if (process.env.DAPIADDRESSES && process.env.DAPIADDRESSES[0]) {
