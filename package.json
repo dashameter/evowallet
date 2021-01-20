@@ -5,9 +5,9 @@
   "author": "dashameter",
   "private": true,
   "scripts": {
-    "evonet": "./scripts/runEvonet.sh",
+    "testnet": "./scripts/runTestnet.sh",
     "local": "./scripts/runLocal.sh",
-    "build": "./scripts/runBuildEvonet.sh",
+    "build-testnet": "./scripts/runBuildTestnet.sh",
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --fix --ext .js,.vue --ignore-path .gitignore ."

@@ -4,7 +4,7 @@ source ~/.evoenv
 unset NUXT_DAPIADDRESSES
 unset NUXT_DPNS_CONTRACT_ID
 
-export NUXT_ENV_RUN="evonet"
+export NUXT_ENV_RUN="testnet"
 
 node ./scripts/registerContracts.js
 

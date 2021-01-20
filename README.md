@@ -11,8 +11,8 @@ $ npm install
 # serve with hot reload for local development
 $ npm run local
 
-# serve with hot reload for evonet development
-$ npm run evonet
+# serve with hot reload for testnet development
+$ npm run testnet
 
 # build for production and launch server
 $ npm run build
@@ -142,7 +142,7 @@ To register the contracts under `./schema`, add their `contractIds` to your envi
 ```bash
 npm run local
 # or
-npm run evonet
+npm run testnet
 # or
 npm run build
 ```
@@ -174,7 +174,7 @@ To register the contracts under `./schema`, add their `contractIds` to your envi
 ```bash
 npm run local
 # or
-npm run evonet
+npm run testnet
 # or
 npm run build
 ```
