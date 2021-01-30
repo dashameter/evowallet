@@ -2,6 +2,8 @@ import Dash from 'dash'
 import Vue from 'vue'
 import { Unit } from '@dashevo/dashcore-lib'
 import { encrypt, decrypt } from 'dashmachine-crypto'
+import localforage from 'localforage'
+
 // Zeppole cotton cake peanut home marriage glance fiber faculty tone void clap crack
 // EvoManiac2 identity B5oV5iB1eP9AJwBHEaK4bgSBtUM83pMsf7a9uyGCiAc7
 
@@ -1035,6 +1037,7 @@ export const actions = {
       })
     ) // TODO DEPLOY ask user for pin
     let clientOpts = {
+      adapter: localforage,
       passFakeAssetLockProofForTests: process.env.LOCALNODE,
       dapiAddresses: process.env.DAPIADDRESSES,
       // dapiAddresses: [
