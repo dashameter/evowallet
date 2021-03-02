@@ -5,7 +5,7 @@
   "author": "dashameter",
   "private": true,
   "scripts": {
-    "testnet": "./scripts/runTestnet.sh",
+    "evonet": "./scripts/runEvonet.sh",
     "local": "./scripts/runLocal.sh",
     "build-testnet": "./scripts/runBuildTestnet.sh",
     "start": "nuxt start",
