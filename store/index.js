@@ -694,7 +694,7 @@ export const actions = {
 
     // If an identity exists on the mnemonic recover it and add to state,
     // otherwise register a fresh one
-    const identities = await client.account.getIdentityIds()
+    const identities = await client.account.identities.getIdentityIds()
 
     if (identities[0]) commit('setIdentity', identities[0])
     // if (balance > 500000) {

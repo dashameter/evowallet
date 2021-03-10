@@ -69,7 +69,7 @@ const initWalletAndIdentity = async () => {
   while (!identityId) {
     try {
       identityId =
-        client.account.getIdentityIds()[0] ||
+        client.account.identities.getIdentityIds()[0] ||
         (await platform.identities.register()).id.toString()
     } catch (e) {
       console.log('Identity register error', e)
