@@ -2,6 +2,8 @@ import Dash from 'dash'
 import Vue from 'vue'
 import { Unit } from '@dashevo/dashcore-lib'
 import { encrypt, decrypt } from 'dashmachine-crypto'
+import localforage from 'localforage'
+
 // Zeppole cotton cake peanut home marriage glance fiber faculty tone void clap crack
 // EvoManiac2 identity B5oV5iB1eP9AJwBHEaK4bgSBtUM83pMsf7a9uyGCiAc7
 
@@ -1035,60 +1037,12 @@ export const actions = {
       })
     ) // TODO DEPLOY ask user for pin
     let clientOpts = {
+      network: 'testnet',
       passFakeAssetLockProofForTests: process.env.LOCALNODE,
       dapiAddresses: process.env.DAPIADDRESSES,
-      // dapiAddresses: [
-      //   '54.212.206.131:3000',
-      //   // '54.184.89.215:3000',
-      //   '35.167.241.7:3000',
-      //   '54.244.159.60:3000',
-      //   '34.219.79.193:3000',
-      //   '34.223.226.20:3000',
-      //   '34.216.133.190:3000',
-      //   '52.88.13.87:3000',
-      //   '54.203.2.102:3000',
-      //   '18.236.73.143:3000',
-      //   '54.187.128.127:3000',
-      //   '54.190.136.191:3000',
-      //   '35.164.4.147:3000',
-      //   '54.189.121.60:3000',
-      //   '54.149.181.16:3000',
-      //   '54.202.214.68:3000',
-      //   '34.221.5.65:3000',
-      //   '34.219.43.9:3000',
-      //   '54.190.1.129:3000',
-      //   '54.186.133.94:3000',
-      //   '54.190.26.250:3000',
-      //   '52.88.38.138:3000',
-      //   // '34.221.185.231:3000',
-      //   '54.189.73.226:3000',
-      //   '34.220.38.59:3000',
-      //   '54.186.129.244:3000',
-      //   '52.32.251.203:3000',
-      //   '54.184.71.154:3000',
-      //   '54.186.22.30:3000',
-      //   '54.185.186.111:3000',
-      //   '34.222.91.196:3000',
-      //   // '54.245.217.116:3000',
-      //   '54.244.203.43:3000',
-      //   '54.69.71.240:3000',
-      //   '52.88.52.65:3000',
-      //   '18.236.139.199:3000',
-      //   '52.33.251.111:3000',
-      //   '54.188.72.112:3000',
-      //   // '52.33.97.75:3000',
-      //   '54.200.73.105:3000',
-      //   '18.237.194.30:3000',
-      //   '52.25.73.91:3000',
-      //   // '18.237.255.133:3000',
-      //   '34.214.12.133:3000',
-      //   '54.149.99.26:3000',
-      //   '18.236.235.220:3000',
-      //   // '35.167.226.182:3000',
-      //   '34.220.159.57:3000',
-      //   '54.186.145.12:3000',
-      //   // '34.212.169.216:3000',
-      // ],
+      unsafeOptions: {
+        skipSynchronizationBeforeHeight: 490143,
+      },
       wallet: {
         mnemonic: await dispatch('decryptMnemonic', {
           encMnemonic: state.mnemonic,
@@ -1108,6 +1062,8 @@ export const actions = {
 
     // Remove undefined keys from object
     clientOpts = JSON.parse(JSON.stringify(clientOpts))
+
+    if (clientOpts.wallet) clientOpts.wallet.adapter = localforage
 
     console.log('clientOpts :>> ', clientOpts)
 
